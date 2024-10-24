@@ -12,13 +12,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.noxi.exporeactnativelecture"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.noxi.exporeactnativelecture"
     },
     "scheme": "expo-example-fall-2024-atvie",
     "web": {
