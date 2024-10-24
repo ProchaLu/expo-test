@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../../constants/colors';
-import type { GuestResponseBodyGet } from '../api/[guestId]+api';
+import type { GuestResponseBodyGet } from '../[guestId]+api';
 
 const styles = StyleSheet.create({
   container: {
