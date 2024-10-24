@@ -20,8 +20,11 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "scheme": "expo-example-fall-2024-atvie",
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "server"
     },
     "extra": {
       "eas": {
@@ -41,6 +44,12 @@
           "android": {
             "newArchEnabled": true
           }
+        }
+      ],
+      [
+        "expo-router",
+        {
+          "origin": "http://localhost:3000"
         }
       ]
     ]
