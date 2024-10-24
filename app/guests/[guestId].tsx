@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import placeholder from '../../assets/candidate-default.avif';
 import { colors } from '../../constants/colors';
-import type { GuestResponseBodyGet } from '../[guestId]+api';
+import type { GuestResponseBodyGet } from '../api/[guestId]+api';
 
 const styles = StyleSheet.create({
   container: {
