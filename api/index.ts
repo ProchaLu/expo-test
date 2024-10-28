@@ -1,5 +1,7 @@
-const { createRequestHandler } = require('@expo/server/adapter/vercel');
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createRequestHandler } from '@expo/server/adapter/vercel';
 
-module.exports = createRequestHandler({
-  build: require('path').join(__dirname, '../dist/server'),
+export default createRequestHandler({
+  build: join(fileURLToPath(new URL('.', import.meta.url)), '../dist/server'),
 });
