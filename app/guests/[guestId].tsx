@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
   Pressable,
@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import placeholder from '../../assets/candidate-default.avif';
 import { colors } from '../../constants/colors';
-import type { GuestResponseBodyGet } from '../api/[guestId]+api';
+import type { GuestResponseBodyGet } from '../api/guests/[guestId]+api';
+import type { UserResponseBodyGet } from '../api/user+api';
 
 const styles = StyleSheet.create({
   container: {
@@ -115,30 +116,40 @@ export default function GuestPage() {
   const [attending, setAttending] = useState(false);
   const [focusedInput, setFocusedInput] = useState<string | undefined>();
 
+  const router = useRouter();
+
   // Dynamic import of images
   // const imageContext = require.context('../../assets', false, /\.(avif)$/);
 
   useFocusEffect(
     useCallback(() => {
-      async function loadGuest() {
+      async function getUserAndLoadGuest() {
         if (typeof guestId !== 'string') {
           return;
         }
+        const [userResponse, guestResponse]: [
+          UserResponseBodyGet,
+          GuestResponseBodyGet,
+        ] = await Promise.all([
+          fetch('/api/user').then((response) => response.json()),
+          fetch(`/api/guests/${guestId}`).then((response) => response.json()),
+        ]);
 
-        const response = await fetch(`/api/${guestId}`);
-        const body: GuestResponseBodyGet = await response.json();
+        if ('error' in userResponse) {
+          router.replace(`/(auth)/login?returnTo=/guests/${guestId}`);
+        }
 
-        if ('guest' in body) {
-          setFirstName(body.guest.firstName);
-          setLastName(body.guest.lastName);
-          setAttending(body.guest.attending);
+        if ('guest' in guestResponse) {
+          setFirstName(guestResponse.guest.firstName);
+          setLastName(guestResponse.guest.lastName);
+          setAttending(guestResponse.guest.attending);
         }
       }
 
-      loadGuest().catch((error) => {
+      getUserAndLoadGuest().catch((error) => {
         console.error(error);
       });
-    }, [guestId]),
+    }, [guestId, router]),
   );
 
   if (typeof guestId !== 'string') {
@@ -195,7 +206,7 @@ export default function GuestPage() {
               { opacity: pressed ? 0.5 : 1 },
             ]}
             onPress={async () => {
-              await fetch(`/api/${guestId}`, {
+              await fetch(`/api/guests/${guestId}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                   firstName,
@@ -205,7 +216,7 @@ export default function GuestPage() {
               });
 
               setIsEditing(false);
-              router.replace('/');
+              router.replace('/(tabs)/guests');
             }}
           >
             <Text style={styles.buttonText}>Save</Text>
@@ -224,7 +235,7 @@ export default function GuestPage() {
             <Switch
               value={attending}
               onValueChange={async () => {
-                await fetch(`/api/${guestId}`, {
+                await fetch(`/api/guests/${guestId}`, {
                   method: 'PUT',
                   body: JSON.stringify({
                     firstName: firstName,
@@ -233,7 +244,7 @@ export default function GuestPage() {
                   }),
                 });
                 setIsEditing(false);
-                router.replace('/');
+                router.replace('/(tabs)/guests');
               }}
             />
           </View>
@@ -249,11 +260,11 @@ export default function GuestPage() {
             <Pressable
               style={styles.icon}
               onPress={async () => {
-                await fetch(`/api/${guestId}`, {
+                await fetch(`/api/guests/${guestId}`, {
                   method: 'DELETE',
                 });
                 setIsEditing(false);
-                router.replace('/');
+                router.replace('/(tabs)/guests');
               }}
             >
               <Ionicons name="trash-outline" size={36} color={colors.text} />
